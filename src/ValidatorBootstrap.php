@@ -38,6 +38,7 @@ class ValidatorBootstrap
             //generics
             'call'          => 'call',
             'callback'      => 'callback',
+            'callabletype'  => 'callableType',
             'not'           => 'not',
             'when'          => 'when',
             'alwaysvalid'   => 'alwaysValid',
@@ -66,7 +67,7 @@ class ValidatorBootstrap
             'digit'         => 'digit',
             'endswith'      => 'endsWith',
             'substr'        => 'in',
-            'graphial'      => 'graph',
+            'graphical'     => 'graph',
             'length'        => 'length',
             'lowercase'     => 'lowercase',
             'nowhitespace'  => 'noWhitespace',
@@ -96,6 +97,7 @@ class ValidatorBootstrap
             'leadpdate'       => 'leapDate',
             'leapyear'        => 'leapYear',
             'minimumage'      => 'minimumAge',
+            'age'             => 'age',
             //group validators
             'allof'           => 'allof',
             'noneof'          => 'noneof',
@@ -105,6 +107,8 @@ class ValidatorBootstrap
             'countrycode'     => 'countrycode',
             //files
             'directory'       => 'directory',
+            'executable'      => 'executable',
+            'extension'       => 'extension',
             'exists'          => 'exists',
             'file'            => 'file',
             'readable'        => 'readable',
@@ -112,12 +116,16 @@ class ValidatorBootstrap
             'uploaded'        => 'uploaded',
             'writable'        => 'writable',
             //other
+            'creditcard'      => 'creditCard',            
             'domainname'      => 'domain',
             'email'           => 'email',
             'ipaddress'       => 'ipaddress',
             'json'            => 'json',
             'macaddress'      => 'macaddress',
-            'phone'           => 'phone'
+            'phone'           => 'phone',
+
+            //math
+            'factor'          => 'factor'
         );
     }
     
@@ -152,7 +160,9 @@ class ValidatorBootstrap
             }
             
             $paramCall = self::_parseStringValidation($paramType, $strParam);
+            
             $paramCallChain = array_merge($paramCallChain, $paramCall);
+            //print_r($paramCallChain);
             ++$a;
         }
         
@@ -192,7 +202,7 @@ class ValidatorBootstrap
             case 'graphical':
                 return array('graph' => array($strParam['additional']));
             case 'length':
-                return array('length' => array($strParam['min'], $strParam['max']));
+                return array('length' => array($strParam['min'], $strParam['max'], $strParam['inclusive']));
             case 'lowercase':
                 return array('lowercase' => array());
             case 'notempty':
@@ -352,15 +362,17 @@ class ValidatorBootstrap
     private static function _parseDatetimeValidation($paramType, $strParam) {
         switch ($paramType) {
             case 'date':
-                return array('date' => array());
+                return array ('date' => array());
             case 'notempty':
-                return array('notEmpty' => array());
+                return array ('notEmpty' => array());
             case 'leapdate':
-                return array('leapDate' => array($strParam['format']));
+                return array ('leapDate' => array($strParam['format']));
             case 'leapyear':
-                return array('leapYear' => array());
+                return array ('leapYear' => array());
             case 'minimumage':
-                return array('minimumAge' => array($strParam['age']));
+                return array ('minimumAge' => array($strParam['age']));
+            case 'age':
+                return array ('age' => array($strParam['min'], $strParam['max']));
             default:
                 throw new ValidatorException('Illegal parameter type issued when parsing datetime validator!');
         }
@@ -400,7 +412,6 @@ class ValidatorBootstrap
             $paramCallChain = array_merge($paramCallChain, $paramCall);
             ++$a;
         }
-        
         return $paramCallChain;
     }
     
@@ -414,10 +425,20 @@ class ValidatorBootstrap
         */
     private static function _parseListValidation($paramType, $strParam) {
         switch ($paramType) {
-            case '':
+            case 'array':
+                return array('arr' => array());
+            case 'contains':
                 return array('contains' => array($strParam['value'], $strParam['identical']));
             case 'inarr':
                 return array('in' => array($strParam['haystack'], $strParam['identical']));
+            case 'endswitharr':
+                return array('endsWith' => array($strParam['value']));
+            case 'lengtharr':
+                return array('length' => array($strParam['min'], $strParam['max'], $strParam['inclusive']));
+            case 'notempty':
+                return array('notEmpty' => array());
+            case 'startswitharr':
+                return array('startsWith' => array($strParam['value']));
             default:
                 throw new ValidatorException('Illegal parameter type issued when parsing list validator!');
         }
@@ -471,8 +492,9 @@ class ValidatorBootstrap
         */
     private static function _parseConstraintValidation($paramType, $strParam) {
         switch ($paramType) {
+
             case 'between':
-                return array('between' => array($strParam['start'], $strParam['end']));
+                return array('between' => array($strParam['start'], $strParam['end'], $strParam['inclusive']));
             case 'equals':
                 return array('equals' => array($strParam['value'], $strParam['identical']));
             case 'max':
