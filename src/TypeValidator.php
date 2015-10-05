@@ -41,10 +41,11 @@ class TypeValidator
         
         //add the actual validation call to the method chain array
         $validatorCallArr[(self::$_vMode)] = array($value);
-        //die(print_r($validatorCallArr));
+        
         //validate with exception handling
         try {
             foreach ($validatorCallArr as $method => $args) {
+                //echo "call_user_func_array(array(vObj, $method), args)".PHP_EOL;
                 call_user_func_array(array($vObj, $method), $args);
             }
             
@@ -56,7 +57,7 @@ class TypeValidator
             }
 
             return $errorsArr;
-        }        
+        }
     }
     
     private static function _validateValue($type, $value, $params) {
@@ -94,12 +95,12 @@ class TypeValidator
     
     public static function varNotNull($value, array $params = array()) {
         $params['notempty'] = true;
-        
         return self::_validateValue('string', $value, $params);       
     }
     
     public static function strNull($value, array $params = array()) {
-        $params['string'] = true;
+        $params['string']   = true;
+        $params['notempty'] = null;
         
         return self::_validateValue('string', $value, $params);               
     }
@@ -113,6 +114,7 @@ class TypeValidator
     
     public static function intNull($value, array $params = array()) {
         $params['int']      = true;
+        $params['notempty'] = null;
         
         return self::_validateValue('number', $value, $params);
     }
@@ -125,7 +127,8 @@ class TypeValidator
     }
     
     public static function decimalNull($value, array $params = array()) {
-        $params['float'] = true;
+        $params['float']    = true;
+        $params['notempty'] = null;
         
         return self::_validateValue('number', $value, $params);
     }
@@ -139,17 +142,38 @@ class TypeValidator
     
     public static function datetimeNotNull($value, array $params = array()) {
         $params['date']     = true;
+        $params['notempty'] = true;
         
         return self::_validateValue('datetime', $value, $params);
     }
     
     public static function listItemNotNull($value, array $params = array()) {
-        return self::_validateValue('list', $value, $params);
+        //verify if the value is an array or a string
+        if (!(is_array($value))) {
+            //if it is a string, verify if it is json and decoee it else throw an exception
+            $valueJsonDecoded = \json_decode($value, true);
+            
+            if (\json_last_error()) {
+                return array (
+                    'json' => 'JSON parse error: ' . \json_last_error_msg()
+                );
+            }
+
+            //assign to a convergent variable array / json 
+            $valueValidate = $valueJsonDecoded;
+        } else {
+            //assign to a convergent variable array / json 
+            $valueValidate = $value;
+        }
+        $params['array']     = true;
+        
+        //run the validation
+        return self::_validateValue('list', $valueValidate, $params);
     }
     
     public static function bool($value, array $params = array()) {
         $params['bool']     = true;
         
-        return self::_validateValue('number', $value, $params);        
+        return self::_validateValue('number', $value, $params);
     }
 }
