@@ -104,7 +104,7 @@ class ValidatorBootstrap
             'oneof'           => 'oneof',
             //regional
             'topleveldomain'  => 'tld',
-            'countrycode'     => 'countrycode',
+            'countrycode'     => 'countryCode',
             //files
             'directory'       => 'directory',
             'executable'      => 'executable',
@@ -119,9 +119,9 @@ class ValidatorBootstrap
             'creditcard'      => 'creditCard',            
             'domainname'      => 'domain',
             'email'           => 'email',
-            'ipaddress'       => 'ipaddress',
+            'ipaddress'       => 'ip',
             'json'            => 'json',
-            'macaddress'      => 'macaddress',
+            'macaddress'      => 'macAddress',
             'phone'           => 'phone',
 
             //math
@@ -227,6 +227,42 @@ class ValidatorBootstrap
                 return array('version' => array());
             case 'vowel':
                 return array('vowel' => array());
+            case 'topleveldomain':
+                return array('tld' => array());
+            case 'countrycode':
+                return array('countryCode' => array());        
+            case 'directory':
+                return array('directory' => array());
+            case 'executable':
+                return array('executable' => array());
+            case 'extension':
+                return array('extension' => array());
+            case 'exists':
+                return array('exists' => array());
+            case 'file':
+                return array('file' => array());
+            case 'readable':
+                return array('readable' => array());
+            case 'symlink':
+                return array('symbolicLink' => array());
+            case 'uploaded':
+                return array('uploaded' => array());
+            case 'writable':
+                return array('writable' => array());
+            case 'creditcard':
+                return array('creditCard' => array());
+            case 'domainname':
+                return array('domain' => array());
+            case 'email':
+                return array('email' => array());
+            case 'ipaddress':
+                return array('ip' => array());
+            case 'json':
+                return array('json' => array());
+            case 'macaddress':
+                return array('macAddress' => array());
+            case 'phone':
+                return array('phone' => array());
             default:
                 throw new ValidatorException('Illegal parameter type issued when parsing string validator!');
         }
@@ -308,6 +344,8 @@ class ValidatorBootstrap
                 return array('primeNumber' => array());
             case 'roman':
                 return array('roman' => array());
+            case 'factor':
+                return array('factor' => array($strParam['dividend']));
             default;
                 throw new ValidatorException('Illegal parameter type issued when parsing number validator!');
         }

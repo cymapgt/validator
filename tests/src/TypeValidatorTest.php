@@ -59,13 +59,14 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase {
         //test var can be validated with additional options (params)
         $paramOptions = array (
             'alphaonly' => true,
+            'directory' => true,
             'length' => array (
                 'min' => 0, 
                 'max' => 20,
                 'inclusive' => true
             )
         );
-
+        //die(print_r(TypeValidator::varNotNull($testVal, $paramOptions)));
         $this->assertInternalType('array', TypeValidator::varNotNull($testVal, $paramOptions));
         $expectedErrorsWithParam1 = TypeValidator::varNotNull($testVal,$paramOptions);
         $this->assertEquals(true, isset($expectedErrorsWithParam1['alpha']));
