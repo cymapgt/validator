@@ -163,4 +163,4 @@ PHPUnit Tests are provided with the package
 
 ### License
 
-PROPRIETARY
+BSD3-CLAUSE
