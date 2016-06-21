@@ -16,7 +16,7 @@
     "name" : "cymapgt/validator",
     "type" : "library",
     "description" : "Wrapper for PHP Respect Validation Package, for use as backend validator for Web/Mobile UI's",
-    "license" : "proprietary",
+    "license" : "BSD 3-clause",
     "require" : {
         "respect/validation" : "~0.9.3"
     },
