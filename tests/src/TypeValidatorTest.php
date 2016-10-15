@@ -85,6 +85,11 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase {
         //test that string can be passed along with additional paramters
         $this->assertInternalType('bool', TypeValidator::strNull($testValNull));
         $this->assertEquals(true, TypeValidator::strNull($testValNull));
+        
+        $testValNull = null;
+        //test that string can be passed along with additional paramters
+        $this->assertInternalType('bool', TypeValidator::strNull($testValNull));
+        $this->assertEquals(true, TypeValidator::strNull($testValNull));
     }
 
     /**
@@ -96,7 +101,7 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase {
         $this->assertInternalType('bool', TypeValidator::strNotNull($testVal));
         $this->assertEquals(true, TypeValidator::strNotNull($testVal));
         
-        $testValNull = '';
+        $testValNull = null;
         //test that null cannot be passed
         $this->assertInternalType('array', TypeValidator::strNotNull($testValNull));
         $expectedErrors = TypeValidator::strNotNull($testValNull);
@@ -112,7 +117,7 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase {
         $this->assertInternalType('bool', TypeValidator::intNull($testVal));
         $this->assertEquals(true, TypeValidator::intNull($testVal));
         
-        $testValNull = 0;
+        $testValNull = null;
         //test that int can be passed along with additional paramters
         $this->assertInternalType('bool', TypeValidator::intNull($testValNull));
         $this->assertEquals(true, TypeValidator::intNull($testValNull));
@@ -127,11 +132,18 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase {
         $this->assertInternalType('bool', TypeValidator::intNotNull($testVal));
         $this->assertEquals(true, TypeValidator::intNotNull($testVal));
         
-        $testValNull = 0;
+        $testValNull = null;
         //test that null cannot be passed
         $this->assertInternalType('array', TypeValidator::intNotNull($testValNull));
         $expectedErrors = TypeValidator::intNotNull($testValNull);
         $this->assertEquals(true, isset($expectedErrors['notEmpty']));
+        
+        $testValNull = 10000;
+        //test that null cannot be passed
+        $params = array('length' => array('min' => 1,'max' => 4, 'inclusive' => true));        
+        $this->assertInternalType('array', TypeValidator::intNotNull($testValNull, $params));
+        $expectedErrors = TypeValidator::intNotNull($testValNull, $params);
+        $this->assertEquals(true, isset($expectedErrors['length']));        
     }
 
     /**
@@ -143,7 +155,7 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase {
         $this->assertInternalType('bool', TypeValidator::decimalNull($testVal));
         $this->assertEquals(true, TypeValidator::decimalNull($testVal));
         
-        $testValNull = 0.0;
+        $testValNull = null;
         //test that int can be passed along with additional paramters
         $this->assertInternalType('bool', TypeValidator::decimalNull($testValNull));
         $this->assertEquals(true, TypeValidator::decimalNull($testValNull));
@@ -158,7 +170,7 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase {
         $this->assertInternalType('bool', TypeValidator::decimalNotNull($testVal));
         $this->assertEquals(true, TypeValidator::decimalNotNull($testVal));
         
-        $testValNull = 0.0;
+        $testValNull = null;
         //test that null cannot be passed
         $this->assertInternalType('array', TypeValidator::decimalNotNull($testValNull));
         $expectedErrors = TypeValidator::decimalNotNull($testValNull);
@@ -261,14 +273,14 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase {
         
         //test bool validation
         $testValOne = 1;
-        $expectedErrorsOne = TypeValidator::bool($testValOne);        
+        $expectedErrorsOne = TypeValidator::bool($testValOne);
         $this->assertInternalType('array', TypeValidator::bool($testValOne));
-        $this->assertEquals(true, isset($expectedErrorsOne['bool']));  
+        $this->assertEquals(false, isset($expectedErrorsOne['bool']));  
         
         //test bool validation
         $testValZero = 0;
         $expectedErrorsZero = TypeValidator::bool($testValZero);        
         $this->assertInternalType('array', TypeValidator::bool($testValZero));
-        $this->assertEquals(true, isset($expectedErrorsZero['bool']));
+        $this->assertEquals(false, isset($expectedErrorsZero['bool']));
     }
 }
