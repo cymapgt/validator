@@ -34,7 +34,8 @@ class ValidatorBootstrap
             'object'        => 'object',
             'string'        => 'string',
             'hex'           => 'xdigit',
-            'notempty'      => 'notEmpty',            
+            'notempty'      => 'notEmpty', 
+            'optional'      => 'optional',
             //generics
             'call'          => 'call',
             'callback'      => 'callback',
@@ -105,6 +106,7 @@ class ValidatorBootstrap
             //regional
             'topleveldomain'  => 'tld',
             'countrycode'     => 'countryCode',
+            'subdivisioncode' => 'subdivisionCode',
             //files
             'directory'       => 'directory',
             'executable'      => 'executable',
@@ -123,7 +125,8 @@ class ValidatorBootstrap
             'json'            => 'json',
             'macaddress'      => 'macAddress',
             'phone'           => 'phone',
-
+            'url'             => 'url',
+            'videourl'        => 'videoUrl',
             //math
             'factor'          => 'factor'
         );
@@ -180,11 +183,13 @@ class ValidatorBootstrap
     private static function _parseStringValidation($paramType, $strParam) {
         switch ($paramType) {
             case 'string':
-                return array('string' => array());
+                return array('stringType' => array());
             case 'alphanumeric':
                 return array('alnum' => array());
             case 'alphaonly':
                 return array('alpha' => array());
+            case 'boolval':
+                return array('boolVal' => array());
             case 'charset':
                 return array('charset' => array($strParam['charset'], $strParam['encoding']));
             case 'consonant':
@@ -230,7 +235,9 @@ class ValidatorBootstrap
             case 'topleveldomain':
                 return array('tld' => array());
             case 'countrycode':
-                return array('countryCode' => array());        
+                return array('countryCode' => array());
+            case 'subdivisionCode':
+                return array('subdivisionCode' => array($strParam['countryCode']));
             case 'directory':
                 return array('directory' => array());
             case 'executable':
@@ -250,7 +257,7 @@ class ValidatorBootstrap
             case 'writable':
                 return array('writable' => array());
             case 'creditcard':
-                return array('creditCard' => array());
+                return array('creditCard' => array($strParam['ccBrand']));
             case 'domainname':
                 return array('domain' => array());
             case 'email':
@@ -263,6 +270,10 @@ class ValidatorBootstrap
                 return array('macAddress' => array());
             case 'phone':
                 return array('phone' => array());
+            case 'url':
+                return array('url' => array());
+            case 'videourl':
+                return array('site' => array());
             default:
                 throw new ValidatorException('Illegal parameter type issued when parsing string validator!');
         }
@@ -316,12 +327,10 @@ class ValidatorBootstrap
         */
     private static function _parseNumberValidation($paramType, $strParam) {
         switch ($paramType) {
-            case 'bool':
-                return array('bool' => array());
             case 'int':
-                return array('int' => array());
+                return array('intType' => array());
             case 'float':
-                return array('float' => array());
+                return array('floatType' => array());
             case 'numeric':
                 return array('numeric' => array());
             case 'hex':
@@ -346,6 +355,8 @@ class ValidatorBootstrap
                 return array('roman' => array());
             case 'factor':
                 return array('factor' => array($strParam['dividend']));
+            case 'length':
+            return array('length' => array($strParam['min'], $strParam['max'], $strParam['inclusive']));                
             default;
                 throw new ValidatorException('Illegal parameter type issued when parsing number validator!');
         }
@@ -464,7 +475,7 @@ class ValidatorBootstrap
     private static function _parseListValidation($paramType, $strParam) {
         switch ($paramType) {
             case 'array':
-                return array('arr' => array());
+                return array('arrayType' => array());
             case 'contains':
                 return array('contains' => array($strParam['value'], $strParam['identical']));
             case 'inarr':
@@ -479,6 +490,61 @@ class ValidatorBootstrap
                 return array('startsWith' => array($strParam['value']));
             default:
                 throw new ValidatorException('Illegal parameter type issued when parsing list validator!');
+        }
+    }
+
+    
+    /**
+       * Cyril Ogana <cogana@gmail.com> - 2016-10-15
+       *  
+       *  Bootstrap the boolean validators
+       * 
+       * @param array $params - Parameters for evaluating a particular validation
+       * 
+       * @return    array
+       */
+    public static function bootstrapBoolValidation(array $params) {
+        //get the method map
+        $vMethodMap = self::getMethodMap();
+        
+        //establish if we have some invalid params
+        $paramsDiff = array_diff_key($params, $vMethodMap);
+        
+        //throw exception if we have some invalid params
+        if (!(empty($paramsDiff))) {
+            throw new ValidatorException('An attempt has been made to bootstrap the bool validator with illegal parameters!');
+        }
+        
+        //instantiate the call chain
+        $paramCallChain = array();
+        $a = 0;
+        
+        foreach($params as $paramType => $strParam) {
+            if (is_null($strParam)) {
+                continue;
+            }
+            
+            $paramCall = self::_parseBoolValidation($paramType, $strParam);
+            $paramCallChain = array_merge($paramCallChain, $paramCall);
+            ++$a;
+        }
+        return $paramCallChain;
+    }
+    
+    /**
+        * Cyril Ogana <cogana@gmail.com> - 2016-10-15
+       * 
+        * @param string $paramType - The validation type requried for the number
+        * @param array  $strParam - none, one or more parameters for the validation method
+        * 
+        * @return array  (of the method and params to add to method chain)
+        */
+    private static function _parseBoolValidation($paramType, $strParam) {
+        switch ($paramType) {
+            case 'bool':
+                return array('boolType' => array());
+            default:
+                throw new ValidatorException('Illegal parameter type issued when parsing Bool validator!');
         }
     }
     
