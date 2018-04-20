@@ -18,10 +18,11 @@
     "description" : "Wrapper for PHP Respect Validation Package, for use in validating data records prior to storing in data store",
     "license" : "proprietary",
     "require" : {
+        "php" : ">=7.0.0",        
         "respect/validation" : "^1.0.0"
     },
     "require-dev" : {
-        "phpunit/phpunit" : "4.*"
+        "phpunit/phpunit" : "6.*"
     },
     "support" : {
         "email" : "cogana@gmail.com",
