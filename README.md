@@ -276,14 +276,12 @@ This example will show how to define a validator for data entering a MySQL table
 			));
 		}
 	}
-	
-	
 
 #### Validating The Data
 
 Assuming the data has arrived to your server, which is an API endpoint, for creation of the product entry. We are using the default check mode of assert, which will store all Exceptions in an array and return them at the end for error reporting. If validation is successful, the validation method returns true.
     
-    use cymapgt\core\utility\validator\TypeValidator;
+    use cymapgt\core\utility\validator\Validator;
     use Example\Product;
     
     //receive data from client
@@ -313,10 +311,7 @@ Assuming the data has arrived to your server, which is an API endpoint, for crea
 		}		
 	}
   
-  	//validate all entriees in collection
-	foreach ($productEntriesCollection as $productEntry) {
-	    $validateProduct($productEntry);
-	}
+
 ### Testing
 
 PHPUnit Tests are provided with the package
